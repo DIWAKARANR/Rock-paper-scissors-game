@@ -1,0 +1,338 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Animated Rock Paper Scissors</title>
+    <style>
+        body, html {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            font-family: 'Arial', sans-serif;
+            overflow: hidden;
+            background: linear-gradient(135deg, #1a2a6c, #b21f1f, #fdbb2d);
+            background-size: 400% 400%;
+            animation: gradientBG 15s ease infinite;
+        }
+        @keyframes gradientBG {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+        .stars {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+        }
+        .star {
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            background: white;
+            border-radius: 50%;
+            animation: twinkle 5s infinite;
+        }
+        @keyframes twinkle {
+            0%, 100% { opacity: 0; }
+            50% { opacity: 1; }
+        }
+        .game-container {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+            background-color: rgba(255, 255, 255, 0.1);
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 0 20px rgba(0,0,0,0.2);
+            backdrop-filter: blur(10px);
+            max-width: 90%;
+            width: 500px;
+        }
+        h1 {
+            color: #fff;
+            margin-bottom: 20px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+        }
+        .choices {
+            display: flex;
+            justify-content: space-around;
+            margin-bottom: 30px;
+        }
+        .choice {
+            cursor: pointer;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            border-radius: 50%;
+            padding: 10px;
+            background-color: rgba(255, 255, 255, 0.2);
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        .choice:hover {
+            transform: scale(1.1);
+            box-shadow: 0 6px 8px rgba(0,0,0,0.15);
+        }
+        .choice svg {
+            width: 60px;
+            height: 60px;
+        }
+        .result {
+            font-size: 24px;
+            font-weight: bold;
+            margin-bottom: 20px;
+            color: #fff;
+            min-height: 30px;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
+        }
+        .score {
+            font-size: 18px;
+            margin-bottom: 20px;
+            color: #fff;
+        }
+        .hands {
+            display: flex;
+            justify-content: space-around;
+            margin-bottom: 30px;
+        }
+        .hand {
+            width: 100px;
+            height: 100px;
+            transition: transform 0.5s ease;
+            background-color: rgba(240, 240, 240, 0.2);
+            border-radius: 15px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        .player-hand {
+            transform: rotateY(180deg);
+        }
+        .shake {
+            animation: shake 0.5s ease;
+        }
+        @keyframes shake {
+            0%, 100% { transform: translateY(0) rotateY(180deg); }
+            25% { transform: translateY(-10px) rotateY(180deg); }
+            75% { transform: translateY(-5px) rotateY(180deg); }
+        }
+        .choice-text {
+            font-size: 14px;
+            margin-top: 5px;
+            color: #fff;
+        }
+        .firework {
+            position: absolute;
+            width: 5px;
+            height: 5px;
+            border-radius: 50%;
+            animation: explode 1s ease-out forwards;
+        }
+        @keyframes explode {
+            0% { transform: scale(1); opacity: 1; }
+            100% { transform: scale(20); opacity: 0; }
+        }
+    </style>
+</head>
+<body>
+    <div class="stars"></div>
+    <div class="game-container">
+        <h1>Rock Paper Scissors</h1>
+        <div class="score">
+            <span>Player: <span id="player-score">0</span></span>
+            <span> | </span>
+            <span>Computer: <span id="computer-score">0</span></span>
+        </div>
+        <div class="hands">
+            <div class="hand player-hand">
+                <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                    <rect width="100" height="100" fill="rgba(224, 224, 224, 0.5)"/>
+                    <text x="50" y="50" font-size="16" text-anchor="middle" dy=".3em" fill="#333">Player</text>
+                </svg>
+            </div>
+            <div class="hand computer-hand">
+                <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                    <rect width="100" height="100" fill="rgba(224, 224, 224, 0.5)"/>
+                    <text x="50" y="50" font-size="16" text-anchor="middle" dy=".3em" fill="#333">Computer</text>
+                </svg>
+            </div>
+        </div>
+        <div class="result" id="result">Choose your weapon!</div>
+        <div class="choices">
+            <div class="choice" id="rock">
+                <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                    <circle cx="50" cy="50" r="45" fill="#8b4513"/>
+                    <circle cx="50" cy="50" r="35" fill="#a0522d"/>
+                    <circle cx="30" cy="30" r="10" fill="#d2691e"/>
+                    <circle cx="70" cy="40" r="8" fill="#d2691e"/>
+                </svg>
+                <div class="choice-text">Rock</div>
+            </div>
+            <div class="choice" id="paper">
+                <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                    <rect x="10" y="10" width="80" height="80" fill="#f0f0f0"/>
+                    <rect x="20" y="20" width="60" height="60" fill="#d3d3d3"/>
+                    <line x1="30" y1="40" x2="70" y2="40" stroke="#a9a9a9" stroke-width="5"/>
+                    <line x1="30" y1="60" x2="70" y2="60" stroke="#a9a9a9" stroke-width="5"/>
+                </svg>
+                <div class="choice-text">Paper</div>
+            </div>
+            <div class="choice" id="scissors">
+                <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                    <circle cx="35" cy="65" r="30" fill="#c0c0c0"/>
+                    <circle cx="65" cy="65" r="30" fill="#c0c0c0"/>
+                    <rect x="35" y="0" width="30" height="65" fill="#c0c0c0"/>
+                    <circle cx="50" cy="25" r="20" fill="#d3d3d3"/>
+                </svg>
+                <div class="choice-text">Scissors</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const choices = ['rock', 'paper', 'scissors'];
+        const playerHand = document.querySelector('.player-hand');
+        const computerHand = document.querySelector('.computer-hand');
+        const result = document.getElementById('result');
+        const playerScore = document.getElementById('player-score');
+        const computerScore = document.getElementById('computer-score');
+        let pScore = 0;
+        let cScore = 0;
+
+        function computerChoice() {
+            return choices[Math.floor(Math.random() * 3)];
+        }
+
+        function updateScore(winner) {
+            if (winner === 'player') {
+                pScore++;
+                playerScore.textContent = pScore;
+                createFireworks();
+            } else if (winner === 'computer') {
+                cScore++;
+                computerScore.textContent = cScore;
+            }
+        }
+
+        function determineWinner(playerChoice, computerChoice) {
+            if (playerChoice === computerChoice) {
+                return 'It\'s a tie!';
+            }
+            if (
+                (playerChoice === 'rock' && computerChoice === 'scissors') ||
+                (playerChoice === 'paper' && computerChoice === 'rock') ||
+                (playerChoice === 'scissors' && computerChoice === 'paper')
+            ) {
+                updateScore('player');
+                return 'You win!';
+            } else {
+                updateScore('computer');
+                return 'Computer wins!';
+            }
+        }
+
+        function resetHands() {
+            playerHand.innerHTML = `
+                <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                    <rect width="100" height="100" fill="rgba(224, 224, 224, 0.5)"/>
+                    <text x="50" y="50" font-size="16" text-anchor="middle" dy=".3em" fill="#333">Player</text>
+                </svg>
+            `;
+            computerHand.innerHTML = `
+                <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                    <rect width="100" height="100" fill="rgba(224, 224, 224, 0.5)"/>
+                    <text x="50" y="50" font-size="16" text-anchor="middle" dy=".3em" fill="#333">Computer</text>
+                </svg>
+            `;
+        }
+
+        function playRound(playerChoice) {
+            resetHands();
+            playerHand.classList.add('shake');
+            computerHand.classList.add('shake');
+
+            setTimeout(() => {
+                const compChoice = computerChoice();
+                updateHands(playerChoice, compChoice);
+                const winner = determineWinner(playerChoice, compChoice);
+                result.textContent = `You chose ${playerChoice}. Computer chose ${compChoice}. ${winner}`;
+                playerHand.classList.remove('shake');
+                computerHand.classList.remove('shake');
+            }, 1000);
+        }
+
+        function updateHands(playerChoice, computerChoice) {
+            const handSVGs = {
+                rock: `
+                    <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                        <circle cx="50" cy="50" r="45" fill="#8b4513"/>
+                        <circle cx="50" cy="50" r="35" fill="#a0522d"/>
+                        <circle cx="30" cy="30" r="10" fill="#d2691e"/>
+                        <circle cx="70" cy="40" r="8" fill="#d2691e"/>
+                    </svg>
+                `,
+                paper: `
+                    <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                        <rect x="10" y="10" width="80" height="80" fill="#f0f0f0"/>
+                        <rect x="20" y="20" width="60" height="60" fill="#d3d3d3"/>
+                        <line x1="30" y1="40" x2="70" y2="40" stroke="#a9a9a9" stroke-width="5"/>
+                        <line x1="30" y1="60" x2="70" y2="60" stroke="#a9a9a9" stroke-width="5"/>
+                    </svg>
+                `,
+                scissors: `
+                    <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                        <circle cx="35" cy="65" r="30" fill="#c0c0c0"/>
+                        <circle cx="65" cy="65" r="30" fill="#c0c0c0"/>
+                        <rect x="35" y="0" width="30" height="65" fill="#c0c0c0"/>
+                        <circle cx="50" cy="25" r="20" fill="#d3d3d3"/>
+                    </svg>
+                `
+            };
+
+            playerHand.innerHTML = handSVGs[playerChoice];
+            computerHand.innerHTML = handSVGs[computerChoice];
+        }
+
+        function createStars() {
+            const starsContainer = document.querySelector('.stars');
+            for (let i = 0; i < 100; i++) {
+                const star = document.createElement('div');
+                star.classList.add('star');
+                star.style.left = `${Math.random() * 100}%`;
+                star.style.top = `${Math.random() * 100}%`;
+                star.style.animationDelay = `${Math.random() * 5}s`;
+                starsContainer.appendChild(star);
+            }
+        }
+
+        function createFireworks() {
+            for (let i = 0; i < 5; i++) {
+                setTimeout(() => {
+                    const firework = document.createElement('div');
+                    firework.classList.add('firework');
+                    firework.style.left = `${Math.random() * 100}%`;
+                    firework.style.top = `${Math.random() * 100}%`;
+                    firework.style.backgroundColor = `hsl(${Math.random() * 360}, 100%, 50%)`;
+                    document.body.appendChild(firework);
+                    setTimeout(() => firework.remove(), 1000);
+                }, i * 200);
+            }
+        }
+
+        document.querySelectorAll('.choice').forEach(choice => {
+            choice.addEventListener('click', function() {
+                playRound(this.id);
+            });
+        });
+
+        createStars();
+        resetHands();
+    </script>
+</body>
+  </html>
+  
